@@ -1,0 +1,28 @@
+{
+  "name": "s3-file-uploader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spolischook/s3-file-uploader.git"
+  },
+  "author": "Serhii Polishchuk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spolischook/s3-file-uploader/issues"
+  },
+  "homepage": "https://github.com/spolischook/s3-file-uploader#readme",
+  "dependencies": {
+    "aws-sdk": "^2.437.0",
+    "sharp": "^0.22.1"
+  },
+  "devDependencies": {
+    "coveralls": "^3.1.0",
+    "jest": "^26.1.0",
+    "mock-aws-s3": "^4.0.1"
+  }
+}
