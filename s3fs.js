@@ -45,15 +45,25 @@ module.exports = (s3) => {
         }));
     }
 
-    function viewAlbum(albumName = null) {
+    function viewAlbum(albumName = null, token = null) {
         const albumPhotosKey = albumName ? albumName + '/' : '';
+        const options = {Prefix: albumPhotosKey};
+        if(token) options.ContinuationToken = token;
 
         return new Promise((resolve, reject) => {
-            s3.listObjectsV2({Prefix: albumPhotosKey}, function (err, data) {
+            s3.listObjectsV2(options, async function (err, data) {
                 if (err) {
                     reject('There was an error viewing your album: ' + err.message);
                 }
-                resolve(data.Contents.filter(obj => obj.Size > 0).map(obj => obj.Key));
+                if (data.IsTruncated) {
+                    const list1 = data.Contents.filter(obj => obj.Size > 0).map(obj => obj.Key);
+                    const list2 = await viewAlbum(albumName, data.NextContinuationToken);
+
+                    resolve(list1.concat(list2));
+                }
+                else {
+                    resolve(data.Contents.filter(obj => obj.Size > 0).map(obj => obj.Key));
+                }
             });
         });
     }
