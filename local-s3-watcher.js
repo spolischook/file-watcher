@@ -61,19 +61,29 @@ async function sync(localFiles) {
     });
 }
 
-function getLocalFilesSync(dir) {
-    const content = fs.readdirSync(dir, { withFileTypes: true });
+function extractAllFillesInDirSync(dir) {
+    const content = fs.readdirSync(dir, {withFileTypes: true});
     let result = [];
     for (const element of content) {
         const realName = dir + '/' + element.name;
         if (element.isDirectory()) {
-            result = result.concat(getLocalFilesSync(realName));
+            result = result.concat(extractAllFillesInDirSync(realName));
         } else {
-            result.push(realName.replace(/^[\.\/]*/, ''));
+            result.push(realName);
         }
     }
 
     return result;
+}
+
+function getLocalFilesSync(dir) {
+    const files = extractAllFillesInDirSync(dir);
+    return files.map(filePath => {
+        if (0 !== filePath.indexOf(dir)) {
+            throw Error(`File "${filePath}" not in "${dir}"`);
+        }
+        return path.relative(dir, filePath);
+    })
 }
 
 async function uploadFile(file) {
